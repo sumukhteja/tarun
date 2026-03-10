@@ -236,7 +236,6 @@
             display: flex;
             align-items: center;
             gap: 1rem;
-            text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
@@ -244,6 +243,7 @@
             border: 1px solid var(--tag-border);
             padding: 2px 8px;
             border-radius: 4px;
+            text-transform: lowercase;
         }
 
         .post-content {
@@ -582,14 +582,13 @@
                 const day = dateObj.getDate();
                 const month = dateObj.toLocaleDateString('en-US', { month: 'long' });
                 const year = dateObj.getFullYear().toString().slice(-2);
-                const formattedDate = `${day}, ${month} '${year}`;
+                const formattedDate = `${day} ${month} '${year}`;
 
                 postElement.innerHTML = `
                         <header class="post-header">
                             <h2 class="post-title" id="title-${article.id}"></h2>
                             <div class="post-meta">
                                 <time datetime="${article.date}">${formattedDate}</time>
-                                <span class="post-tag">${article.type}</span>
                             </div>
                         </header>
                         <div class="post-content truncated" id="content-${article.id}"></div>
