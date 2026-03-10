@@ -10,6 +10,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 font-family=%22Outfit, sans-serif%22 font-weight=%22900%22>p</text></svg>">
     <style>
         :root {
             --bg-page: #0a0a0a;
@@ -139,6 +141,7 @@
         .post-content.truncated {
             display: -webkit-box;
             -webkit-line-clamp: 4;
+            line-clamp: 4;
             -webkit-box-orient: vertical;
         }
 
@@ -376,15 +379,18 @@
                     titleEl.textContent = article.title;
                     contentEl.textContent = article.content;
 
-                    // Only show button if content exceeds roughly 4 lines
-                    // Using line count (by \n) as a simple check
                     const lineCount = article.content.split('\n').length;
-                    if (lineCount <= 4) {
+                    const needsTruncation = lineCount > 4;
+
+                    if (!needsTruncation) {
                         contentEl.classList.remove('truncated');
                         btnEl.style.display = 'none';
+                    } else {
+                        postElement.style.cursor = 'pointer';
                     }
 
-                    btnEl.addEventListener('click', () => {
+                    const togglePost = () => {
+                        if (!needsTruncation) return;
                         const isTruncated = contentEl.classList.contains('truncated');
                         if (isTruncated) {
                             contentEl.classList.remove('truncated');
@@ -393,6 +399,12 @@
                             contentEl.classList.add('truncated');
                             btnEl.textContent = 'read more';
                         }
+                    };
+
+                    postElement.addEventListener('click', togglePost);
+                    btnEl.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent double trigger
+                        togglePost();
                     });
                 });
             }
