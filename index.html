@@ -12,12 +12,23 @@
         rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0a0a0a;
+            --bg-page: #0a0a0a;
             --text-main: #f3f4f6;
             --text-sub: #6b7280;
             --accent: #ffffff;
+            --border: #27272a;
+            --tag-border: #3f3f46;
             --font-display: 'Outfit', sans-serif;
             --font-body: 'Inter', sans-serif;
+        }
+
+        [data-theme="light"] {
+            --bg-page: #ffffff;
+            --text-main: #0a0a0a;
+            --text-sub: #6b7280;
+            --accent: #000000;
+            --border: #e5e7eb;
+            --tag-border: #d1d5db;
         }
 
         * {
@@ -27,17 +38,18 @@
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-page);
             color: var(--text-main);
             font-family: var(--font-body);
             line-height: 1.8;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         ::selection {
             background-color: var(--text-main);
-            color: var(--bg-dark);
+            color: var(--bg-page);
         }
 
         .container {
@@ -54,7 +66,6 @@
             font-family: var(--font-display);
             font-size: 4rem;
             font-weight: 900;
-            text-transform: uppercase;
             letter-spacing: -0.04em;
             line-height: 1;
             margin-bottom: 0.5rem;
@@ -64,7 +75,6 @@
             font-size: 0.9rem;
             color: var(--text-sub);
             letter-spacing: 0.2em;
-            text-transform: uppercase;
         }
 
         .posts-container {
@@ -74,7 +84,7 @@
         }
 
         .post {
-            border-left: 2px solid #27272a;
+            border-left: 2px solid var(--border);
             padding-left: 2rem;
             transition: border-color 0.3s ease;
             animation: fadeIn 0.8s ease-out;
@@ -96,6 +106,7 @@
             letter-spacing: -0.02em;
             margin-bottom: 0.75rem;
             color: var(--text-main);
+            text-transform: lowercase;
         }
 
         .post-meta {
@@ -109,7 +120,7 @@
         }
 
         .post-tag {
-            border: 1px solid #3f3f46;
+            border: 1px solid var(--tag-border);
             padding: 2px 8px;
             border-radius: 4px;
         }
@@ -139,6 +150,29 @@
             text-align: center;
             display: none;
             border-radius: 4px;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+
+        .theme-toggle:hover {
+            background: var(--text-main);
+            color: var(--bg-page);
         }
 
         @keyframes fadeIn {
@@ -200,9 +234,10 @@
 <body>
 
     <div class="container">
+        <button class="theme-toggle" id="theme-toggle">light</button>
         <header>
-            <h1>Protagonist</h1>
-            <p>Poetry and Rap Journal</p>
+            <h1>protagonist</h1>
+            <p>fragments of a rhythm</p>
         </header>
 
         <main>
@@ -213,6 +248,28 @@
     </div>
 
     <script>
+        // Theme Management
+        const themeToggle = document.getElementById('theme-toggle');
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+
+        if (currentTheme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+            themeToggle.textContent = 'dark';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            let theme = document.documentElement.getAttribute('data-theme');
+            if (theme === 'light') {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+                themeToggle.textContent = 'light';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                themeToggle.textContent = 'dark';
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', async () => {
             const postsContainer = document.getElementById('posts');
             const loader = document.getElementById('loader');
