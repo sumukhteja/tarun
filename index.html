@@ -157,8 +157,7 @@
         }
 
         .post {
-            border-left: 2px solid var(--border);
-            padding-left: 2rem;
+            padding-left: 0;
             opacity: 0.3;
             /* Dim by default */
             transition: all 0.6s ease;
@@ -168,29 +167,11 @@
         .post.is-visible {
             opacity: 1;
             transform: translateY(0);
-            border-left-color: var(--accent);
         }
 
-        .post:hover {
-            border-left-color: var(--accent);
-        }
 
-        .progress-bar-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            z-index: 10001;
-            pointer-events: none;
-        }
 
-        #progress-bar {
-            height: 100%;
-            width: 0%;
-            background-color: var(--accent);
-            transition: width 0.1s ease;
-        }
+
 
         .post-header {
             margin-bottom: 1.5rem;
@@ -431,9 +412,7 @@
     </div>
 </div>
 
-<div class="progress-bar-container">
-    <div id="progress-bar"></div>
-</div>
+
 
 <div class="container" id="main-container">
     <button class="theme-toggle" id="theme-toggle">light</button>
@@ -614,14 +593,7 @@
             });
         }
 
-        // Scroll Progress
-        const progressBar = document.getElementById('progress-bar');
-        window.addEventListener('scroll', () => {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            progressBar.style.width = scrolled + "%";
-        });
+
 
         try {
             const response = await fetch('content.json');
