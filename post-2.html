@@ -8,7 +8,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --bg-page: #1a1a1a;
@@ -72,37 +71,11 @@
             }
         }
 
-        .back-btn {
-            position: fixed;
-            top: 24px;
-            left: 24px;
-            z-index: 100;
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-sub);
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .back-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
         .controls-container {
-            position: fixed;
-            top: 24px;
-            right: 24px;
             display: flex;
-            flex-direction: column;
             gap: 12px;
-            z-index: 100;
-            align-items: flex-end;
+            margin: 24px 0;
+            justify-content: center;
         }
 
         .theme-toggle,
@@ -110,21 +83,19 @@
             background: none;
             border: 1px solid var(--border);
             color: var(--text-main);
-            padding: 10px;
-            border-radius: 50%;
+            padding: 8px 12px;
+            border-radius: 6px;
             cursor: pointer;
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            text-transform: lowercase;
+            letter-spacing: 0.1em;
             transition: all 0.2s ease;
-            width: 40px;
-            height: 40px;
+            width: fit-content;
+            height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .theme-toggle svg,
-        .sound-toggle svg {
-            width: 18px;
-            height: 18px;
         }
 
         .theme-toggle:hover,
@@ -170,6 +141,7 @@
             scroll-snap-align: start;
             position: relative;
             text-align: center;
+            overflow: hidden;
         }
 
         .verse-content {
@@ -178,24 +150,21 @@
             color: var(--text-main);
             opacity: 0;
             filter: blur(10px);
-            transform: translateY(10px);
-            transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: all 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .verse-content.from-left {
+            transform: translateX(-100px) translateY(10px);
+        }
+
+        .verse-content.from-right {
+            transform: translateX(100px) translateY(10px);
         }
 
         .verse-section.is-visible .verse-content {
             opacity: 1;
             filter: blur(0);
-            transform: translateY(0);
-        }
-
-        .verse-number {
-            position: absolute;
-            bottom: 40px;
-            right: 40px;
-            font-family: var(--font-display);
-            font-size: 0.8rem;
-            color: var(--text-sub);
-            opacity: 0.3;
+            transform: translateX(0) translateY(0);
         }
 
         footer {
@@ -221,7 +190,7 @@
         .footer-links {
             display: flex;
             gap: 2rem;
-            margin-top: 2rem;
+            margin-top: 1rem;
         }
 
         .footer-links a {
@@ -245,31 +214,12 @@
             .verse-content {
                 font-size: 1.2rem;
             }
-
-            .controls-container {
-                top: 16px;
-                right: 16px;
-            }
-
-            .back-btn {
-                top: 16px;
-                left: 16px;
-            }
         }
     </style>
 </head>
 
 <body>
     <div class="bg-grid"></div>
-
-    <button class="back-btn" onclick="window.location.href='index.html'" title="back to home">
-        <i data-lucide="arrow-left"></i>
-    </button>
-
-    <div class="controls-container">
-        <button class="theme-toggle" id="theme-toggle" title="toggle theme"><i data-lucide="sun"></i></button>
-        <button class="sound-toggle" id="sound-toggle" title="toggle sound"><i data-lucide="volume-x"></i></button>
-    </div>
 
     <audio id="bg-music" loop>
         <source src="bg.mp3" type="audio/mpeg">
@@ -281,41 +231,43 @@
     </header>
 
     <section class="verse-section">
-        <div class="verse-content">
+        <div class="verse-content from-left">
             yeah, waking up to the sirens, city never sleeps,<br>
             walking through the neon, making promises to keep.
         </div>
-        <div class="verse-number">01</div>
     </section>
 
     <section class="verse-section">
-        <div class="verse-content">
+        <div class="verse-content from-right">
             hustle in my veins, gotta elevate the name,<br>
             not doing it for clout, man, i'm dodging all the fame.
         </div>
-        <div class="verse-number">02</div>
     </section>
 
     <section class="verse-section">
-        <div class="verse-content">
+        <div class="verse-content from-left">
             type the words, hit record, let the beat drop,<br>
             started from the bottom now we heading to the top.
         </div>
-        <div class="verse-number">03</div>
     </section>
 
     <section class="verse-section">
-        <div class="verse-content">
+        <div class="verse-content from-right">
             every single verse is a piece of my soul,<br>
             putting pieces together just to make myself whole.
         </div>
-        <div class="verse-number">04</div>
     </section>
 
     <footer>
         <div class="footer-content">
             <h3 onclick="window.location.href='index.html'" style="cursor:pointer">protagonist</h3>
             <p style="font-size: 0.8rem; color: var(--text-sub);">&copy; 2026. fragments of a rhythm.</p>
+
+            <div class="controls-container">
+                <button class="theme-toggle" id="theme-toggle" title="toggle theme">theme</button>
+                <button class="sound-toggle" id="sound-toggle" title="toggle sound">sound</button>
+            </div>
+
             <div class="footer-links">
                 <a href="https://instagram.com" target="_blank">instagram</a>
                 <a href="https://discord.com" target="_blank">discord</a>
@@ -324,16 +276,14 @@
     </footer>
 
     <script>
-        lucide.createIcons();
-
         const themeToggle = document.getElementById('theme-toggle');
         const currentTheme = localStorage.getItem('theme') || 'dark';
 
         if (currentTheme === 'light') {
             document.body.setAttribute('data-theme', 'light');
-            themeToggle.innerHTML = '<i data-lucide="moon"></i>';
+            themeToggle.textContent = 'dark';
         } else {
-            themeToggle.innerHTML = '<i data-lucide="sun"></i>';
+            themeToggle.textContent = 'light';
         }
 
         themeToggle.addEventListener('click', () => {
@@ -341,13 +291,12 @@
             if (theme === 'light') {
                 document.body.removeAttribute('data-theme');
                 localStorage.setItem('theme', 'dark');
-                themeToggle.innerHTML = '<i data-lucide="sun"></i>';
+                themeToggle.textContent = 'light';
             } else {
                 document.body.setAttribute('data-theme', 'light');
                 localStorage.setItem('theme', 'light');
-                themeToggle.innerHTML = '<i data-lucide="moon"></i>';
+                themeToggle.textContent = 'dark';
             }
-            lucide.createIcons();
         });
 
         const soundToggle = document.getElementById('sound-toggle');
@@ -356,22 +305,21 @@
 
         if (!isMuted && localStorage.getItem('gatekeeper_unlocked') === 'true') {
             bgMusic.play().catch(e => console.log("Audio play blocked", e));
-            soundToggle.innerHTML = '<i data-lucide="volume-2"></i>';
+            soundToggle.textContent = 'sound: on';
         } else {
-            soundToggle.innerHTML = '<i data-lucide="volume-x"></i>';
+            soundToggle.textContent = 'sound: off';
         }
 
         soundToggle.addEventListener('click', () => {
             if (bgMusic.paused) {
                 bgMusic.play();
-                soundToggle.innerHTML = '<i data-lucide="volume-2"></i>';
+                soundToggle.textContent = 'sound: on';
                 localStorage.setItem('music_muted', 'false');
             } else {
                 bgMusic.pause();
-                soundToggle.innerHTML = '<i data-lucide="volume-x"></i>';
+                soundToggle.textContent = 'sound: off';
                 localStorage.setItem('music_muted', 'true');
             }
-            lucide.createIcons();
         });
 
         const sections = document.querySelectorAll('.verse-section');
@@ -384,7 +332,6 @@
         }, { threshold: 0.5 });
 
         sections.forEach(section => observer.observe(section));
-        lucide.createIcons();
     </script>
 </body>
 

@@ -364,14 +364,10 @@
         }
 
         .controls-container {
-            position: fixed;
-            top: 24px;
-            right: 24px;
             display: flex;
-            flex-direction: column;
             gap: 12px;
-            z-index: 100;
-            align-items: flex-end;
+            margin: 24px 0;
+            justify-content: center;
         }
 
         .theme-toggle,
@@ -379,21 +375,25 @@
             background: none;
             border: 1px solid var(--border);
             color: var(--text-main);
-            padding: 10px;
-            border-radius: 50%;
+            padding: 8px 12px;
+            border-radius: 6px;
             cursor: pointer;
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            text-transform: lowercase;
+            letter-spacing: 0.1em;
             transition: all 0.2s ease;
-            width: 40px;
-            height: 40px;
+            width: fit-content;
+            height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .theme-toggle svg,
-        .sound-toggle svg {
-            width: 18px;
-            height: 18px;
+        .theme-toggle:hover,
+        .sound-toggle:hover {
+            background: var(--text-main);
+            color: var(--bg-page);
         }
 
         .theme-toggle:hover,
@@ -565,7 +565,7 @@
             }
 
             .posts-container {
-                gap: 4rem;
+                gap: 10rem;
             }
 
             footer {
@@ -604,10 +604,7 @@
 
 
 <div class="container" id="main-container">
-    <div class="controls-container">
-        <button class="theme-toggle" id="theme-toggle" title="toggle theme"><i data-lucide="sun"></i></button>
-        <button class="sound-toggle" id="sound-toggle" title="toggle sound"><i data-lucide="volume-x"></i></button>
-    </div>
+
     <header>
         <h1 onclick="window.location.reload()">protagonist</h1>
         <p>fragments of a rhythm</p>
@@ -638,6 +635,10 @@
         <div class="footer-left">
             <h3 onclick="window.location.reload()">protagonist</h3>
             <p>&copy; 2026. fragments of a rhythm.</p>
+        </div>
+        <div class="controls-container">
+            <button class="theme-toggle" id="theme-toggle" title="toggle theme">light</button>
+            <button class="sound-toggle" id="sound-toggle" title="toggle sound">sound: off</button>
         </div>
         <div class="footer-links">
             <a href="https://instagram.com" target="_blank">instagram</a>
@@ -677,13 +678,12 @@
                 mainContainer.style.display = 'block';
                 if (playMusic) {
                     bgMusic.play().catch(e => console.log("Audio play blocked:", e));
-                    soundToggle.innerHTML = '<i data-lucide="volume-2"></i>';
+                    soundToggle.textContent = 'sound: on';
                     localStorage.setItem('music_muted', 'false');
                 } else {
-                    soundToggle.innerHTML = '<i data-lucide="volume-x"></i>';
+                    soundToggle.textContent = 'sound: off';
                     localStorage.setItem('music_muted', 'true');
                 }
-                lucide.createIcons();
             }, 800);
         };
 
@@ -698,14 +698,13 @@
     soundToggle.addEventListener('click', () => {
         if (bgMusic.paused) {
             bgMusic.play().catch(e => console.log("Audio play blocked:", e));
-            soundToggle.innerHTML = '<i data-lucide="volume-2"></i>';
+            soundToggle.textContent = 'sound: on';
             localStorage.setItem('music_muted', 'false');
         } else {
             bgMusic.pause();
-            soundToggle.innerHTML = '<i data-lucide="volume-x"></i>';
+            soundToggle.textContent = 'sound: off';
             localStorage.setItem('music_muted', 'true');
         }
-        lucide.createIcons();
     });
 
     // Auto-unlock if already authenticated in this session
@@ -734,24 +733,22 @@
 
     if (currentTheme === 'light') {
         document.documentElement.setAttribute('data-theme', 'light');
-        themeToggle.innerHTML = '<i data-lucide="moon"></i>';
+        themeToggle.textContent = 'dark';
     } else {
-        themeToggle.innerHTML = '<i data-lucide="sun"></i>';
+        themeToggle.textContent = 'light';
     }
-    lucide.createIcons();
 
     themeToggle.addEventListener('click', () => {
         let theme = document.documentElement.getAttribute('data-theme');
         if (theme === 'light') {
             document.documentElement.removeAttribute('data-theme');
             localStorage.setItem('theme', 'dark');
-            themeToggle.innerHTML = '<i data-lucide="sun"></i>';
+            themeToggle.textContent = 'light';
         } else {
             document.documentElement.setAttribute('data-theme', 'light');
             localStorage.setItem('theme', 'light');
-            themeToggle.innerHTML = '<i data-lucide="moon"></i>';
+            themeToggle.textContent = 'dark';
         }
-        lucide.createIcons();
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
