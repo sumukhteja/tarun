@@ -1,0 +1,25 @@
+{
+    "articles": [
+        {
+            "id": 1,
+            "title": "Midnight Thoughts",
+            "date": "2026-03-10",
+            "type": "poetry",
+            "content": "The stars are quiet tonight,\nWhispering secrets to the moon.\nI sit alone with my notebook,\nHoping morning doesn't come too soon.\n\nShadows dance upon the walls,\nA silent ballet in the dark.\nEvery breath a fragile melody,\nLeaving an invisible mark."
+        },
+        {
+            "id": 2,
+            "title": "Concrete Dreams",
+            "date": "2026-03-09",
+            "type": "rap",
+            "content": "Yeah, waking up to the sirens, city never sleeps,\nWalking through the neon, making promises to keep.\nHustle in my veins, gotta elevate the name,\nNot doing it for clout, man, I'm dodging all the fame.\n\nType the words, hit record, let the beat drop,\nStarted from the bottom now we heading to the top.\nEvery single verse is a piece of my soul,\nPutting pieces together just to make myself whole."
+        },
+        {
+            "id": 3,
+            "title": "Ocean's Edge",
+            "date": "2026-03-08",
+            "type": "poetry",
+            "content": "Waves crashing down,\nErasing the footprints we left behind.\nThe tide pulls away,\nTaking fragments of my restless mind.\n\nSalt in the air, a cold, biting breeze,\nFinding comfort in the chaotic seas."
+        }
+    ]
+}
