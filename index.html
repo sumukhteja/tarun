@@ -14,6 +14,7 @@
         :root {
             --bg-page: #0a0a0a;
             --text-main: #f3f4f6;
+            --text-content: #d1d5db;
             --text-sub: #6b7280;
             --accent: #ffffff;
             --border: #27272a;
@@ -25,6 +26,7 @@
         [data-theme="light"] {
             --bg-page: #ffffff;
             --text-main: #0a0a0a;
+            --text-content: #374151;
             --text-sub: #6b7280;
             --accent: #000000;
             --border: #e5e7eb;
@@ -127,9 +129,61 @@
 
         .post-content {
             font-size: 1.1rem;
-            color: #d1d5db;
+            color: var(--text-content);
             white-space: pre-wrap;
             line-height: 1.8;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .post-content.truncated {
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+        }
+
+        .read-more-btn {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            text-transform: lowercase;
+            padding: 8px 0;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 10px;
+        }
+
+        .read-more-btn:hover {
+            color: var(--accent);
+        }
+
+        .search-container {
+            margin-bottom: 4rem;
+        }
+
+        .search-input {
+            width: 100%;
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            padding: 12px 0;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-sub);
+            text-transform: lowercase;
+            opacity: 0.5;
         }
 
         #loader {
@@ -240,6 +294,10 @@
             <p>fragments of a rhythm</p>
         </header>
 
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="search verses...">
+        </div>
+
         <main>
             <div id="loader">Loading verses...</div>
             <div id="error-message"></div>
@@ -274,41 +332,28 @@
             const postsContainer = document.getElementById('posts');
             const loader = document.getElementById('loader');
             const errorMessage = document.getElementById('error-message');
+            const searchInput = document.getElementById('search-input');
 
-            try {
-                // Fetch the content from content.json
-                const response = await fetch('content.json');
+            let allArticles = [];
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+            function renderArticles(articles) {
+                postsContainer.innerHTML = '';
 
-                const data = await response.json();
-                const articles = data.articles;
-
-                // Remove loader
-                loader.style.display = 'none';
-
-                if (!articles || articles.length === 0) {
-                    postsContainer.innerHTML = '<p style="text-align: center; color: var(--accent-color); font-style: italic;">No verses found yet.</p>';
+                if (articles.length === 0) {
+                    postsContainer.innerHTML = '<p style="text-align: center; color: var(--text-sub); font-style: italic; text-transform: lowercase;">no matches found.</p>';
                     return;
                 }
 
-                // Render each post
                 articles.forEach(article => {
                     const postElement = document.createElement('article');
                     postElement.className = 'post';
 
-                    // Formatting date nicely
                     const dateObj = new Date(article.date);
                     const formattedDate = dateObj.toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
                     });
-
-                    // We use white-space: pre-wrap in CSS so textContent is perfectly safe to use
-                    // and will automatically handle the \n correctly without using risky innerHTML.
 
                     postElement.innerHTML = `
                         <header class="post-header">
@@ -318,21 +363,68 @@
                                 <span class="post-tag">${article.type}</span>
                             </div>
                         </header>
-                        <div class="post-content" id="content-${article.id}"></div>
+                        <div class="post-content truncated" id="content-${article.id}"></div>
+                        <button class="read-more-btn" id="btn-${article.id}">read more</button>
                     `;
 
                     postsContainer.appendChild(postElement);
 
-                    // Safely set text content to prevent XSS and preserve proper formatting
-                    document.getElementById(`title-${article.id}`).textContent = article.title;
-                    document.getElementById(`content-${article.id}`).textContent = article.content;
+                    const titleEl = document.getElementById(`title-${article.id}`);
+                    const contentEl = document.getElementById(`content-${article.id}`);
+                    const btnEl = document.getElementById(`btn-${article.id}`);
+
+                    titleEl.textContent = article.title;
+                    contentEl.textContent = article.content;
+
+                    // Only show button if content exceeds roughly 4 lines
+                    // Using line count (by \n) as a simple check
+                    const lineCount = article.content.split('\n').length;
+                    if (lineCount <= 4) {
+                        contentEl.classList.remove('truncated');
+                        btnEl.style.display = 'none';
+                    }
+
+                    btnEl.addEventListener('click', () => {
+                        const isTruncated = contentEl.classList.contains('truncated');
+                        if (isTruncated) {
+                            contentEl.classList.remove('truncated');
+                            btnEl.textContent = 'show less';
+                        } else {
+                            contentEl.classList.add('truncated');
+                            btnEl.textContent = 'read more';
+                        }
+                    });
+                });
+            }
+
+            try {
+                const response = await fetch('content.json');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                allArticles = data.articles || [];
+
+                loader.style.display = 'none';
+                renderArticles(allArticles);
+
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    const filtered = allArticles.filter(article =>
+                        article.title.toLowerCase().includes(query) ||
+                        article.content.toLowerCase().includes(query) ||
+                        article.type.toLowerCase().includes(query)
+                    );
+                    renderArticles(filtered);
                 });
 
             } catch (error) {
                 console.error("Error loading the content:", error);
                 loader.style.display = 'none';
                 errorMessage.style.display = 'block';
-                errorMessage.textContent = 'Oops! Could not load the verses. Please make sure content.json is valid and the server is running.';
+                errorMessage.textContent = 'oops! could not load the verses. check content.json.';
             }
         });
     </script>
