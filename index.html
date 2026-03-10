@@ -12,6 +12,7 @@
         rel="stylesheet">
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 font-family=%22Outfit, sans-serif%22 font-weight=%22900%22>p</text></svg>">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --bg-page: #1a1a1a;
@@ -72,7 +73,7 @@
                 linear-gradient(var(--grid-color) 1px, transparent 1px),
                 linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
             background-size: 60px 60px;
-            animation: moveGrid 60s linear infinite;
+            animation: moveGrid 35s linear infinite;
             pointer-events: none;
             opacity: 0.5;
         }
@@ -354,25 +355,41 @@
             border-radius: 4px;
         }
 
-        .theme-toggle {
+        .controls-container {
             position: fixed;
             top: 24px;
             right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+            align-items: flex-end;
+        }
+
+        .theme-toggle,
+        .sound-toggle {
             background: none;
             border: 1px solid var(--border);
             color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 6px;
+            padding: 10px;
+            border-radius: 50%;
             cursor: pointer;
-            font-family: var(--font-display);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
             transition: all 0.2s ease;
-            z-index: 100;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .theme-toggle:hover {
+        .theme-toggle svg,
+        .sound-toggle svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .theme-toggle:hover,
+        .sound-toggle:hover {
             background: var(--text-main);
             color: var(--bg-page);
         }
@@ -579,7 +596,10 @@
 
 
 <div class="container" id="main-container">
-    <button class="theme-toggle" id="theme-toggle">light</button>
+    <div class="controls-container">
+        <button class="theme-toggle" id="theme-toggle" title="toggle theme"><i data-lucide="sun"></i></button>
+        <button class="sound-toggle" id="sound-toggle" title="toggle sound"><i data-lucide="volume-x"></i></button>
+    </div>
     <header>
         <h1 onclick="window.location.reload()">protagonist</h1>
         <p>fragments of a rhythm</p>
@@ -643,18 +663,38 @@
 
         const enterSite = (playMusic) => {
             musicPrompt.style.opacity = '0';
+            const soundToggle = document.getElementById('sound-toggle');
             setTimeout(() => {
                 musicPrompt.style.display = 'none';
                 mainContainer.style.display = 'block';
                 if (playMusic) {
                     bgMusic.play().catch(e => console.log("Audio play blocked:", e));
+                    soundToggle.innerHTML = '<i data-lucide="volume-2"></i>';
+                } else {
+                    soundToggle.innerHTML = '<i data-lucide="volume-x"></i>';
                 }
+                lucide.createIcons();
             }, 800);
         };
 
         musicYes.addEventListener('click', () => enterSite(true));
         musicNo.addEventListener('click', () => enterSite(false));
     };
+
+    // Sound Toggle Logic
+    const soundToggle = document.getElementById('sound-toggle');
+    const bgMusic = document.getElementById('bg-music');
+
+    soundToggle.addEventListener('click', () => {
+        if (bgMusic.paused) {
+            bgMusic.play().catch(e => console.log("Audio play blocked:", e));
+            soundToggle.innerHTML = '<i data-lucide="volume-2"></i>';
+        } else {
+            bgMusic.pause();
+            soundToggle.innerHTML = '<i data-lucide="volume-x"></i>';
+        }
+        lucide.createIcons();
+    });
 
     // Auto-unlock if already authenticated in this session
     if (localStorage.getItem('gatekeeper_unlocked') === 'true') {
@@ -682,20 +722,24 @@
 
     if (currentTheme === 'light') {
         document.documentElement.setAttribute('data-theme', 'light');
-        themeToggle.textContent = 'dark';
+        themeToggle.innerHTML = '<i data-lucide="moon"></i>';
+    } else {
+        themeToggle.innerHTML = '<i data-lucide="sun"></i>';
     }
+    lucide.createIcons();
 
     themeToggle.addEventListener('click', () => {
         let theme = document.documentElement.getAttribute('data-theme');
         if (theme === 'light') {
             document.documentElement.removeAttribute('data-theme');
             localStorage.setItem('theme', 'dark');
-            themeToggle.textContent = 'light';
+            themeToggle.innerHTML = '<i data-lucide="sun"></i>';
         } else {
             document.documentElement.setAttribute('data-theme', 'light');
             localStorage.setItem('theme', 'light');
-            themeToggle.textContent = 'dark';
+            themeToggle.innerHTML = '<i data-lucide="moon"></i>';
         }
+        lucide.createIcons();
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
