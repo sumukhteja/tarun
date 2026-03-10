@@ -15,6 +15,7 @@
             --text-main: #f3f4f6;
             --text-sub: #6b7280;
             --accent: #ffffff;
+            --border: #2d2d2d;
             --grid-color: rgba(255, 255, 255, 0.05);
             --font-display: 'Outfit', sans-serif;
             --font-body: 'Inter', sans-serif;
@@ -25,6 +26,7 @@
             --text-main: #1a1a1a;
             --text-sub: #6b7280;
             --accent: #000000;
+            --border: #e5e7eb;
             --grid-color: rgba(0, 0, 0, 0.03);
         }
 
@@ -76,7 +78,7 @@
             left: 24px;
             z-index: 100;
             background: none;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
             color: var(--text-sub);
             padding: 10px;
             border-radius: 50%;
@@ -92,6 +94,45 @@
             color: var(--accent);
         }
 
+        .controls-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+            align-items: flex-end;
+        }
+
+        .theme-toggle,
+        .sound-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle svg,
+        .sound-toggle svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .theme-toggle:hover,
+        .sound-toggle:hover {
+            background: var(--text-main);
+            color: var(--bg-page);
+        }
+
         .post-header {
             height: 100vh;
             display: flex;
@@ -105,7 +146,7 @@
 
         .post-header h1 {
             font-family: var(--font-display);
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 900;
             letter-spacing: -0.04em;
             margin-bottom: 1rem;
@@ -136,12 +177,14 @@
             line-height: 2;
             color: var(--text-main);
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 1s ease;
+            filter: blur(10px);
+            transform: translateY(10px);
+            transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .verse-section.is-visible .verse-content {
             opacity: 1;
+            filter: blur(0);
             transform: translateY(0);
         }
 
@@ -155,6 +198,45 @@
             opacity: 0.3;
         }
 
+        footer {
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            scroll-snap-align: end;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .footer-content h3 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            text-transform: lowercase;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.8rem;
+            text-transform: lowercase;
+            letter-spacing: 0.1em;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
         @media (max-width: 600px) {
             .post-header h1 {
                 font-size: 2.5rem;
@@ -163,17 +245,39 @@
             .verse-content {
                 font-size: 1.2rem;
             }
+
+            .controls-container {
+                top: 16px;
+                right: 16px;
+            }
+
+            .back-btn {
+                top: 16px;
+                left: 16px;
+            }
         }
     </style>
 </head>
 
-<body data-theme="dark">
+<body>
     <div class="bg-grid"></div>
-    <button class="back-btn" onclick="window.location.href='index.html'"><i data-lucide="arrow-left"></i></button>
+
+    <button class="back-btn" onclick="window.location.href='index.html'" title="back to home">
+        <i data-lucide="arrow-left"></i>
+    </button>
+
+    <div class="controls-container">
+        <button class="theme-toggle" id="theme-toggle" title="toggle theme"><i data-lucide="sun"></i></button>
+        <button class="sound-toggle" id="sound-toggle" title="toggle sound"><i data-lucide="volume-x"></i></button>
+    </div>
+
+    <audio id="bg-music" loop>
+        <source src="bg.mp3" type="audio/mpeg">
+    </audio>
 
     <header class="post-header">
         <h1>ocean's edge</h1>
-        <p>08 march '26</p>
+        <p>08 March '26</p>
     </header>
 
     <section class="verse-section">
@@ -200,12 +304,67 @@
         <div class="verse-number">03</div>
     </section>
 
+    <footer>
+        <div class="footer-content">
+            <h3 onclick="window.location.href='index.html'" style="cursor:pointer">protagonist</h3>
+            <p style="font-size: 0.8rem; color: var(--text-sub);">&copy; 2026. fragments of a rhythm.</p>
+            <div class="footer-links">
+                <a href="https://instagram.com" target="_blank">instagram</a>
+                <a href="https://discord.com" target="_blank">discord</a>
+            </div>
+        </div>
+    </footer>
+
     <script>
         lucide.createIcons();
 
-        if (localStorage.getItem('theme') === 'light') {
+        const themeToggle = document.getElementById('theme-toggle');
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+
+        if (currentTheme === 'light') {
             document.body.setAttribute('data-theme', 'light');
+            themeToggle.innerHTML = '<i data-lucide="moon"></i>';
+        } else {
+            themeToggle.innerHTML = '<i data-lucide="sun"></i>';
         }
+
+        themeToggle.addEventListener('click', () => {
+            let theme = document.body.getAttribute('data-theme');
+            if (theme === 'light') {
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'dark');
+                themeToggle.innerHTML = '<i data-lucide="sun"></i>';
+            } else {
+                document.body.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                themeToggle.innerHTML = '<i data-lucide="moon"></i>';
+            }
+            lucide.createIcons();
+        });
+
+        const soundToggle = document.getElementById('sound-toggle');
+        const bgMusic = document.getElementById('bg-music');
+        const isMuted = localStorage.getItem('music_muted') === 'true';
+
+        if (!isMuted && localStorage.getItem('gatekeeper_unlocked') === 'true') {
+            bgMusic.play().catch(e => console.log("Audio play blocked", e));
+            soundToggle.innerHTML = '<i data-lucide="volume-2"></i>';
+        } else {
+            soundToggle.innerHTML = '<i data-lucide="volume-x"></i>';
+        }
+
+        soundToggle.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                soundToggle.innerHTML = '<i data-lucide="volume-2"></i>';
+                localStorage.setItem('music_muted', 'false');
+            } else {
+                bgMusic.pause();
+                soundToggle.innerHTML = '<i data-lucide="volume-x"></i>';
+                localStorage.setItem('music_muted', 'true');
+            }
+            lucide.createIcons();
+        });
 
         const sections = document.querySelectorAll('.verse-section');
         const observer = new IntersectionObserver((entries) => {
@@ -217,6 +376,7 @@
         }, { threshold: 0.5 });
 
         sections.forEach(section => observer.observe(section));
+        lucide.createIcons();
     </script>
 </body>
 
