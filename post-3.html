@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ocean's Edge | Protagonist</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-page: #1a1a1a;
+            --text-main: #f3f4f6;
+            --text-sub: #6b7280;
+            --accent: #ffffff;
+            --grid-color: rgba(255, 255, 255, 0.05);
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        [data-theme="light"] {
+            --bg-page: #ffffff;
+            --text-main: #1a1a1a;
+            --text-sub: #6b7280;
+            --accent: #000000;
+            --grid-color: rgba(0, 0, 0, 0.03);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            height: 100vh;
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image:
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: moveGrid 35s linear infinite;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        @keyframes moveGrid {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 120px 120px;
+            }
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 100;
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-sub);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .post-header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            text-align: center;
+            scroll-snap-align: start;
+        }
+
+        .post-header h1 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 1rem;
+            text-transform: lowercase;
+        }
+
+        .post-header p {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            letter-spacing: 0.2em;
+            text-transform: lowercase;
+        }
+
+        .verse-section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 10vw;
+            scroll-snap-align: start;
+            position: relative;
+            text-align: center;
+        }
+
+        .verse-content {
+            font-size: 1.5rem;
+            line-height: 2;
+            color: var(--text-main);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease;
+        }
+
+        .verse-section.is-visible .verse-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .verse-number {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            opacity: 0.3;
+        }
+
+        @media (max-width: 600px) {
+            .post-header h1 {
+                font-size: 2.5rem;
+            }
+
+            .verse-content {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body data-theme="dark">
+    <div class="bg-grid"></div>
+    <button class="back-btn" onclick="window.location.href='index.html'"><i data-lucide="arrow-left"></i></button>
+
+    <header class="post-header">
+        <h1>ocean's edge</h1>
+        <p>08 march '26</p>
+    </header>
+
+    <section class="verse-section">
+        <div class="verse-content">
+            waves crashing down,<br>
+            erasing the footprints we left behind.
+        </div>
+        <div class="verse-number">01</div>
+    </section>
+
+    <section class="verse-section">
+        <div class="verse-content">
+            the tide pulls away,<br>
+            taking fragments of my restless mind.
+        </div>
+        <div class="verse-number">02</div>
+    </section>
+
+    <section class="verse-section">
+        <div class="verse-content">
+            salt in the air, a cold, biting breeze,<br>
+            finding comfort in the chaotic seas.
+        </div>
+        <div class="verse-number">03</div>
+    </section>
+
+    <script>
+        lucide.createIcons();
+
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+        }
+
+        const sections = document.querySelectorAll('.verse-section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, { threshold: 0.5 });
+
+        sections.forEach(section => observer.observe(section));
+    </script>
+</body>
+
+</html>

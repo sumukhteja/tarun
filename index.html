@@ -776,8 +776,7 @@
                                 <time datetime="${article.date}">${formattedDate}</time>
                             </div>
                         </header>
-                        <div class="post-content truncated" id="content-${article.id}"></div>
-                        <button class="read-more-btn" id="btn-${article.id}">read more</button>
+                        <div class="post-content" id="content-${article.id}"></div>
                     `;
 
                 postsContainer.appendChild(postElement);
@@ -787,9 +786,6 @@
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
                             entry.target.classList.add('is-visible');
-                        } else {
-                            // Optional: Remove to keep it visible once seen
-                            // entry.target.classList.remove('is-visible');
                         }
                     });
                 }, { threshold: 0.15 });
@@ -798,37 +794,13 @@
 
                 const titleEl = document.getElementById(`title-${article.id}`);
                 const contentEl = document.getElementById(`content-${article.id}`);
-                const btnEl = document.getElementById(`btn-${article.id}`);
 
                 titleEl.textContent = article.title;
-                contentEl.textContent = article.content;
+                const lines = article.content.split('\n');
+                contentEl.textContent = lines.slice(0, 2).join('\n') + "...";
 
-                const lineCount = article.content.split('\n').length;
-                const needsTruncation = lineCount > 4;
-
-                if (!needsTruncation) {
-                    contentEl.classList.remove('truncated');
-                    btnEl.style.display = 'none';
-                } else {
-                    postElement.style.cursor = 'pointer';
-                }
-
-                const togglePost = () => {
-                    if (!needsTruncation) return;
-                    const isTruncated = contentEl.classList.contains('truncated');
-                    if (isTruncated) {
-                        contentEl.classList.remove('truncated');
-                        btnEl.textContent = 'show less';
-                    } else {
-                        contentEl.classList.add('truncated');
-                        btnEl.textContent = 'read more';
-                    }
-                };
-
-                postElement.addEventListener('click', togglePost);
-                btnEl.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    togglePost();
+                postElement.addEventListener('click', () => {
+                    window.location.href = `post-${article.id}.html`;
                 });
             });
         }
